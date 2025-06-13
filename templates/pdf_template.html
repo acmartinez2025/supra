@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Supra Application PDF</title>
+  <style>
+  </style>
+  <style>
+    pre {
+      font-size: 18px; /* Adjust size as needed (e.g., 16px for larger) */
+    }
+  </style>
+</head>
+<body>
+  <pre>
+SUPRA EKEY APPLICATION SUMMARY
+
+MEMBER INFORMATION
+------------------
+Name: {{ name }}
+Email: {{ email }}
+Member ID: {{ member_id }}
+Plan: {{ plan }}
+Notes: {{ notes }}
+
+{% if lockbox_option == 'yes' %}
+LOCKBOX DETAILS
+---------------
+Quantity: {{ lockbox_qty }}
+Shackle Code: {{ shackle_code }}
+Shipping Option: {{ shipping }}
+Pickup Date: {{ pickup_date }}
+Pickup Time: {{ pickup_time }}
+Shipping Address: {{ shipping_address }}
+{% endif %}
+
+CREDIT CARD AUTHORIZATION
+-------------------------
+Member's Name: {{ cc_name }}
+Member ID: {{ cc_id }}
+Total Amount: {{ total }}
+Card Number: {{ card_number }}
+Exp. Date: {{ exp_date }}
+CVC: {{ cvc }}
+Phone Number: {{ phone }}
+Signature: {{ signature }}
+
+{% if drawn_signature %}
+[Drawn Signature Image Below]
+<img src="{{ drawn_signature }}" alt="Drawn Signature" style="margin-top: 10px; max-height: 100px;">
+{% endif %}
+
+Acknowledgement: {{ acknowledgement }}
+  </pre>
+</body>
+</html>
