@@ -6,6 +6,12 @@
   <title>Supra eKEY Application</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
+    .missing input,
+    .missing select,
+    .missing textarea {
+      border: 2px solid #d10000 !important;
+      box-shadow: 0 0 5px rgba(209, 0, 0, 0.2);
+    }
     canvas {
       touch-action: none;
       user-select: none;
@@ -298,7 +304,25 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="tab-nav" style="background: #ffffff; border-bottom: 1px solid #d1d1d1; padding: 1rem 2rem; display: flex; justify-content: center; gap: 20px;">
+    <a href="#supraForm" id="purchaseTab">Supra Purchase</a>
+    <a href="#cancelForm" id="cancelTab">Supra Cancellation</a>
+  </div>
+
+  <style>
+    #purchaseFormContainer, #cancelForm, #termsPopup {
+      display: none;
+    }
+  </style>
+  <!-- Begin Supra Cancellation Form Embed -->
+  <div id="cancelForm" class="container" style="display:none;">
+   <!-- <h2>Supra Cancellation Form</h2>-->
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf4yDKB-jwZUnrZarhhjj_S12fLgMK2H3vYGHZ5CkKTGf3tXQ/viewform?embedded=true" width="100%" height="1200" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      Loading…
+    </iframe>
+  </div>
+  <!-- End Supra Cancellation Form Embed -->
+  <div id="purchaseFormContainer" class="container">
     <img src="{{ url_for('static', filename='images/supralogo.png') }}" alt="Supra logo" style="width:140px; display:block; margin:0 auto 20px;">
     <h2>Supra eKEY Application</h2>
 
@@ -323,23 +347,24 @@
       <!-- Hidden acknowledge terms checkbox for validation -->
       <input type="checkbox" name="acknowledged_terms" id="acknowledged_terms" hidden required>
 
-      <!-- Mobile-friendly popup -->
-      <div id="termsPopup" style="display:none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 20px; max-width: 90%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); margin: 40px auto;">
+      <!-- Mobile-friendly popup (from form1.html) -->
+      <div id="termsPopup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:24px 18px; max-width:95vw; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.22); margin:40px auto; position:relative;">
+          <span onclick="closeTermsPopup()" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
           <h3 style="color:#1e4e79;">Please Acknowledge</h3>
-          <p style="font-size: 0.95rem; color: #333;">
+          <p style="font-size:0.97rem; color:#222;">
             I acknowledge 13.2 Key Use and Service terms. Keys may not be used under any circumstances by anyone other than the key holder, including, but not limited to, lending, borrowing, or sharing keys with others.
           </p>
-          <p style="font-size: 0.95rem; color: #333;">
+          <p style="font-size:0.97rem; color:#222;">
             I agree to the cancellation terms and fees. I acknowledge that I will pay a $30 programming Fee, plus Supra will charge a $50 activation fee if I decide to re-activate my account in the future.
           </p>
-          <div style="margin-top: 20px;">
-            <label for="popup_signature" style="display:block; margin-bottom:6px;">Initial here:<br></label>
-            <canvas id="popup-signature-pad" width="300" height="100" style="border:1px solid #ccc; border-radius:6px; display:block; margin-bottom:10px;"required></canvas>
-            <button type="button" onclick="clearPopupSignature()" style="margin-bottom: 10px;">Clear</button>
+          <div style="margin-top:18px;">
+            <label for="popup_signature" style="display:block; margin-bottom:7px;">Initial here:</label>
+            <canvas id="popup-signature-pad" width="300" height="100" style="border:1px solid #ccc; border-radius:7px; display:block; margin-bottom:10px;" required></canvas>
+            <button type="button" onclick="clearPopupSignature()" style="margin-bottom:10px;">Clear</button>
             <input type="hidden" name="popup_drawn_signature" id="popup_drawn_signature">
           </div>
-          <button onclick="acceptTerms()" style="margin-top: 10px; background-color: #1e4e79; color: white; border: none; padding: 10px 20px; border-radius: 6px;">I Acknowledge</button>
+        <button id="acknowledgeButton" type="button" onclick="acceptTerms()" style="margin-top:10px; background-color:#1e4e79; color:white; border:none; padding:10px 22px; border-radius:7px;">I Acknowledge</button>
         </div>
       </div>
 
@@ -418,7 +443,7 @@
         <div class="form-group">
           <label for="lockbox_qty">Supra Lockbox ($120 Each)</label>
           <select id="lockbox_qty" name="lockbox_qty">
-            <option value="0">0</option>
+            <option value="0">Select</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -506,16 +531,16 @@
             <label for="exp_year">Exp. Year</label>
             <select id="exp_year" name="exp_year" autocomplete="cc-exp-year" required>
               <option value="" disabled selected>YY</option>
-              <option value="24">2024</option>
-              <option value="25">2025</option>
-              <option value="26">2026</option>
-              <option value="27">2027</option>
-              <option value="28">2028</option>
-              <option value="29">2029</option>
-              <option value="30">2030</option>
-              <option value="31">2031</option>
-              <option value="32">2032</option>
-              <option value="33">2033</option>
+              <option value="24">2025</option>
+              <option value="25">2026</option>
+              <option value="26">2027</option>
+              <option value="27">2028</option>
+              <option value="28">2029</option>
+              <option value="29">2030</option>
+              <option value="30">2031</option>
+              <option value="31">2032</option>
+              <option value="32">2033</option>
+              <option value="33">2034</option>
             </select>
           </div>
         </div>
@@ -543,8 +568,15 @@
             <label for="total">Total Amount</label>
             <input type="text" id="total" name="total" readonly style="font-weight:bold; color:#d10000;">
           </div>
+        <!-- Manual acknowledge checkbox above submit button -->
+        <div class="form-group" style="margin-top: 30px; display: flex; align-items: center; gap: 10px;">
+          <a href="#" onclick="showTermsPopup()" id="acknowledgeLink" style="color: #1e4e79; font-weight: bold; text-decoration: underline;">
+            Click here to acknowledge terms
+          </a>
+          <span id="ackCheckmark" style="display: none; color: green; font-size: 1.2rem;">✔</span>
+        </div>
         <div class="form-group" style="text-align: center;">
-          <button type="submit">Submit Application</button>
+          <button type="submit" style="background-color: #1e4e79; color: white;">Submit Application</button>
         </div>
       </div>
       </form>
@@ -557,23 +589,9 @@
   <div class="form-group" style="text-align: center;"><label for="notes"> Phone: (310)357-1833</label>
   </div>
 
+  <hr style="margin-top: 60px;">
   <script>
-    // Defer disabling submit button and show "Processing..." only after final submit,
-    // so popup acknowledgment doesn't block form prematurely
-    document.addEventListener("DOMContentLoaded", function () {
-      const form = document.getElementById("supraForm");
-      const submitBtn = form.querySelector('button[type="submit"]');
-      form.addEventListener("submit", function (e) {
-        if (!form.checkValidity()) return;
-
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.innerText = "Processing...";
-          submitBtn.style.backgroundColor = "#999";
-          submitBtn.style.cursor = "not-allowed";
-        }
-      });
-    });
+    // No longer disabling submit button or requiring form completion checks before submission.
     function calculateTotal() {
       // Get selected plan from radio buttons
       let plan = '';
@@ -662,6 +680,16 @@
         lockboxFields.style.display = (yesRadio && yesRadio.checked) ? 'block' : 'none';
       }
 
+      // Make shackle code required only if "Yes" is selected
+      const shackleCodeInput = document.getElementById('shackle_code');
+      if (shackleCodeInput) {
+        if (yesRadio && yesRadio.checked) {
+          shackleCodeInput.setAttribute('required', 'required');
+        } else {
+          shackleCodeInput.removeAttribute('required');
+        }
+      }
+
       if (noRadio && noRadio.checked && lockboxQtySelect) {
         lockboxQtySelect.value = "0";
         calculateTotal();
@@ -691,51 +719,7 @@
     })();
   </script>
   <!-- The file input is now invisibly over the button for mobile compatibility, so we do not need to trigger click via JS. -->
-  <script>
-    // Ensure only one submit listener is attached and properly handles terms popup
-    (function() {
-      const supraForm = document.getElementById('supraForm');
-      // Remove any existing submit listeners if this script is run more than once
-      // (Not strictly necessary in this static context, but for robustness)
-      function handleSubmit(event) {
-        if (!document.getElementById('acknowledged_terms').checked) {
-          event.preventDefault();
-          showTermsPopup();
-        }
-      }
-      // Remove all submit event listeners (if any) before adding
-      // Not needed here, but good practice if scripts could run multiple times
-      supraForm.addEventListener('submit', handleSubmit);
-
-      window.showTermsPopup = function showTermsPopup() {
-        const popup = document.getElementById('termsPopup');
-        popup.style.display = 'flex';
-        popup.style.justifyContent = 'center';
-        popup.style.alignItems = 'center';
-      };
-
-      window.acceptTerms = function acceptTerms() {
-        const form = document.getElementById('supraForm');
-        const terms = document.getElementById('acknowledged_terms');
-
-        if (popupSignaturePad.isEmpty()) {
-          alert("Please initial in the box before acknowledging.");
-          return;
-        }
-
-        savePopupSignature();
-        terms.checked = true;
-        document.getElementById('termsPopup').style.display = 'none';
-
-        // Trigger native form submission manually
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        form.dispatchEvent(submitEvent);
-        if (form.checkValidity()) {
-          form.submit();
-        }
-      };
-    })();
-  </script>
+  <!-- Removed duplicate submit handler and terms popup logic block, see below for single source -->
   <script>
     function updateFileList(input) {
       const fileList = document.getElementById('fileList');
@@ -908,5 +892,107 @@ dropArea.addEventListener('drop', e => {
     });
   </script>
 </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function highlightMissingFields() {
+        const requiredFields = supraForm.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+          const formGroup = field.closest('.form-group');
+          if (formGroup) {
+            if ((field.type === 'checkbox' && !field.checked) ||
+                (field.type !== 'checkbox' && !field.value.trim())) {
+              formGroup.classList.add('missing');
+            } else {
+              formGroup.classList.remove('missing');
+            }
+          }
+        });
+      }
+      const purchaseTab = document.getElementById('purchaseTab');
+      const cancelTab = document.getElementById('cancelTab');
+      const purchaseForm = document.getElementById('purchaseFormContainer');
+      const cancelForm = document.getElementById('cancelForm');
+      const popup = document.getElementById('termsPopup');
+      const supraForm = document.getElementById('supraForm');
+      // Initially hide the forms and popup
+      purchaseForm.style.display = 'none';
+      popup.style.display = 'none';
+      if (cancelForm) cancelForm.style.display = 'none';
+
+      if (purchaseTab && cancelTab && purchaseForm && cancelForm) {
+        purchaseTab.addEventListener('click', function (e) {
+          e.preventDefault();
+          purchaseForm.style.display = 'block';
+          if (cancelForm) cancelForm.style.display = 'none';
+          popup.style.display = 'none';
+          purchaseTab.classList.add('active');
+          cancelTab.classList.remove('active');
+        });
+        cancelTab.addEventListener('click', function (e) {
+          e.preventDefault();
+          purchaseForm.style.display = 'none';
+          if (cancelForm) cancelForm.style.display = 'block';
+          purchaseTab.classList.remove('active');
+          cancelTab.classList.add('active');
+        });
+        // Set initial active tab and show purchase form by default
+        purchaseTab.classList.add('active');
+        purchaseForm.style.display = 'block';
+        if (cancelForm) cancelForm.style.display = 'none';
+      }
+
+      // Terms acknowledgment popup logic (from form1.html)
+      supraForm.addEventListener("submit", function (e) {
+        const terms = document.getElementById('acknowledged_terms');
+        if (!terms.checked) {
+          e.preventDefault();
+          showTermsPopup();
+          return false;
+        }
+        highlightMissingFields();
+        // Add timestamp if not present
+        if (!document.querySelector('input[name="acknowledgement_timestamp"]')) {
+          supraForm.insertAdjacentHTML('beforeend', `<input type="hidden" name="acknowledgement_timestamp" value="${new Date().toISOString()}">`);
+        }
+      });
+
+      // Add event listener to manual acknowledge checkbox to trigger popup
+      const manualAck = document.getElementById('manual_ack_checkbox');
+      if (manualAck) {
+        manualAck.addEventListener('click', function (e) {
+          e.preventDefault();
+          showTermsPopup();
+        });
+      }
+
+      window.showTermsPopup = function showTermsPopup() {
+        popup.style.display = 'flex';
+        popup.style.justifyContent = 'center';
+        popup.style.alignItems = 'center';
+      };
+      window.acceptTerms = function acceptTerms() {
+        const terms = document.getElementById('acknowledged_terms');
+        const popupSigData = document.getElementById('popup_drawn_signature').value;
+
+        if (popupSignaturePad.isEmpty()) {
+          alert("Please initial in the box before acknowledging.");
+          return;
+        }
+
+        savePopupSignature();
+        if (!popupSigData) {
+          alert("Signature failed to save. Please try again.");
+          return;
+        }
+
+        terms.checked = true;
+        document.getElementById('ackCheckmark').style.display = 'inline';
+        popup.style.display = 'none';
+      };
+      window.closeTermsPopup = function closeTermsPopup() {
+        document.getElementById('termsPopup').style.display = 'none';
+      };
+    });
+  </script>
 </body>
 </html>
