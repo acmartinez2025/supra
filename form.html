@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supra eKEY Application</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    .missing input,
+    .missing select,
+    .missing textarea {
+      border: 2px solid #d10000 !important;
+      box-shadow: 0 0 5px rgba(209, 0, 0, 0.2);
+    }
+    canvas {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+    * {
+      box-sizing: border-box;
+
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      color: #2e3a59;
+    }
+
+    .header-bar {
+      background-color: #1e4e79;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .header-content img {
+      height: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 50px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      text-align: center;
+      color: #1e4e79;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: #1e4e79;
+      border-left: 4px solid #1e4e79;
+      padding-left: 12px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 260px;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive stacking and spacing for Exp. Month/Year */
+    .form-row .form-group {
+      flex: 1;
+      margin-right: 12px;
+    }
+    .form-row .form-group:last-child {
+      margin-right: 0;
+    }
+    @media (max-width: 600px) {
+      .form-row .form-group {
+        width: 100%;
+      }
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #3e4c66;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #d5dbe0;
+      font-size: 1rem;
+      background-color: #f9fbfc;
+      transition: all 0.2s ease-in-out;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #1e4e79;
+      background-color: #fff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(30, 78, 121, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .upload-section {
+      border: 2px dashed #c2d3e7;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 12px;
+      background-color: #f5f8fb;
+      transition: 0.3s;
+    }
+
+    .upload-section:hover {
+      background-color: #edf3f9;
+      border-color: #1e4e79;
+    }
+
+    .upload-section button {
+      padding: 12px 24px;
+      border: 1px solid #1e4e79;
+      background-color: #e3ecf6;
+      color: #1e4e79;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .upload-section input[type="file"] {
+      display: none;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      background-color: #1e4e79;
+      color: white;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 40px;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #153d60;
+    }
+
+    .text__counter {
+      font-size: 0.9rem;
+      color: #777;
+      text-align: right;
+    }
+
+    #fileList p {
+      margin: 0 0 10px;
+    }
+
+    #fileList ul {
+      padding-left: 0;
+    }
+
+    #fileList li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #eaf1fb;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      border: 1px solid #d0dde9;
+    }
+
+    #fileList img {
+      width: 50px;
+      border-radius: 4px;
+      margin-left: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    #fileList button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #1e4e79;
+      cursor: pointer;
+      padding: 0 8px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+
+      .container {
+        padding: 30px 20px;
+        margin: 20px;
+      }
+
+      .upload-section img {
+        width: 100%;
+        max-width: 260px;
+      }
+    }
+
+    /* Bubble radio button styles for Service Plan */
+    .bubble-label {
+      display: inline-block;
+      padding: 12px 16px;
+      border: 2px solid #1e4e79;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #1e4e79;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    input[type="radio"]:checked + .bubble-label {
+      background-color: #1e4e79;
+      color: white;
+    }
+
+    /* Modern info icon and tooltip */
+    .tab-nav a {
+      color: #1e4e79;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+    .tab-nav a.active {
+      background-color: #e3ecf6;
+    }
+    .info-icon {
+      position: relative;
+      display: inline-block;
+      color: #1e4e79;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-left: 6px;
+    }
+
+    .custom-tooltip {
+      visibility: hidden;
+      opacity: 0;
+      width: max-content;
+      max-width: 220px;
+      background-color: #1e4e79;
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 8px 12px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .info-icon:focus .custom-tooltip,
+    .info-icon:hover .custom-tooltip,
+    .custom-tooltip.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div class="header-content">
+      <a href="https://www.themls.com/"><img src="{{ url_for('static', filename='images/vesta__logo.svg') }}" alt="The MLS Logo"></a>
+    </div>
+  </div>
+
+  <div class="tab-nav" style="background: #ffffff; border-bottom: 1px solid #d1d1d1; padding: 1rem 2rem; display: flex; justify-content: center; gap: 20px;">
+    <a href="#supraForm" id="purchaseTab">Supra Purchase</a>
+    <a href="#cancelForm" id="cancelTab">Supra Cancellation</a>
+  </div>
+
+  <style>
+    #purchaseFormContainer, #cancelForm, #termsPopup {
+      display: none;
+    }
+  </style>
+  <!-- Begin Supra Cancellation Form Embed -->
+  <div id="cancelForm" class="container" style="display:none;">
+   <!-- <h2>Supra Cancellation Form</h2>-->
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf4yDKB-jwZUnrZarhhjj_S12fLgMK2H3vYGHZ5CkKTGf3tXQ/viewform?embedded=true" width="100%" height="1200" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      Loading…
+    </iframe>
+  </div>
+  <!-- End Supra Cancellation Form Embed -->
+  <div id="purchaseFormContainer" class="container">
+    <img src="{{ url_for('static', filename='images/supralogo.png') }}" alt="Supra logo" style="width:140px; display:block; margin:0 auto 20px;">
+    <h2>Supra eKEY Application</h2>
+
+    <form id="supraForm" action="/submit" method="POST" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <input type="hidden" name="send_copy_to_user" value="yes">
+      </div>
+
+      <div class="form-group">
+        <label for="member_id">Member ID</label>
+        <input type="text" id="member_id" name="member_id" required>
+      </div>
+
+      <!-- Hidden acknowledge terms checkbox for validation -->
+      <input type="checkbox" name="acknowledged_terms" id="acknowledged_terms" hidden required>
+
+      <!-- Mobile-friendly popup (from form1.html) -->
+      <div id="termsPopup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:24px 18px; max-width:95vw; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.22); margin:40px auto; position:relative;">
+          <span onclick="closeTermsPopup()" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
+          <h3 style="color:#1e4e79;">Please Acknowledge</h3>
+          <p style="font-size:0.97rem; color:#222;">
+            I acknowledge 13.2 Key Use and Service terms. Keys may not be used under any circumstances by anyone other than the key holder, including, but not limited to, lending, borrowing, or sharing keys with others.
+          </p>
+          <p style="font-size:0.97rem; color:#222;">
+            I agree to the cancellation terms and fees. I acknowledge that I will pay a $30 programming Fee, plus Supra will charge a $50 activation fee if I decide to re-activate my account in the future.
+          </p>
+          <div style="margin-top:18px;">
+            <label for="popup_signature" style="display:block; margin-bottom:7px;">Initial here:</label>
+            <canvas id="popup-signature-pad" width="300" height="100" style="border:1px solid #ccc; border-radius:7px; display:block; margin-bottom:10px;" required></canvas>
+            <button type="button" onclick="clearPopupSignature()" style="margin-bottom:10px;">Clear</button>
+            <input type="hidden" name="popup_drawn_signature" id="popup_drawn_signature">
+          </div>
+        <button id="acknowledgeButton" type="button" onclick="acceptTerms()" style="margin-top:10px; background-color:#1e4e79; color:white; border:none; padding:10px 22px; border-radius:7px;">I Acknowledge</button>
+        </div>
+      </div>
+
+      <div class="section-title">Required Items for eKEY Sign Up</div>
+
+      <div class="form-group">
+        <label><span style="color:red">*</span> Upload Documents</label>
+        <div class="upload-section" id="drop-area" style="position: relative;">
+          <p>Drag & drop your files here or click below</p>
+          <p>Max file size: <b>15 MB</b> — Allowed types: <b>PDF, JPEG, HEIC</b></p>
+          <p><b>Selfie, ID, Self-portrait with ID</b></p>
+          <img src="{{ url_for('static', filename='images/selfie.png') }}" alt="Example selfie" style="width:150px;">
+          <p><b>Up to 3 attachments</b></p>
+          <label for="upload_files" style="display: inline-block; padding: 12px 24px; border: 1px solid #1e4e79; background-color: #e3ecf6; color: #1e4e79; font-size: 1rem; font-weight: 500; border-radius: 8px; cursor: pointer;">
+            Add File(s)
+            <input type="file" id="upload_files" name="upload_files" required multiple accept="application/pdf,image/png,image/jpg,image/jpeg"
+                   onchange="updateFileList(this)" style="display: none;">
+          </label>
+          <div id="fileList" style="margin-top: 10px; font-size: 0.95rem; color: #444;"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">User Notes</label>
+        <textarea id="notes" name="notes" rows="5" maxlength="200" oninput="document.getElementById('note-counter').textContent = this.value.length + '/200';"></textarea>
+        <div class="text__counter" id="note-counter">0/200</div>
+      </div>
+
+      <div class="section-title">Service Plan</div>
+      <div class="form-group">
+        <label>
+          Do you need a eKey?<br>	<smaller >$80 Today + $50 Activation + $30 Programming </smaller></br>
+          <!--- <span class="info-icon" tabindex="0" onclick="toggleTooltip()" onblur="hideTooltip()">
+            ⓘ
+            <span class="custom-tooltip" id="ekeyTooltip">
+              $80 Today + $50 Activation + $30 Programming
+            </span>
+          </span>-->
+        </label>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: left;">
+          <input type="radio" id="plan_ekey" name="plan" value="Ekey" required hidden>
+          <label for="plan_ekey" class="bubble-label">
+            Yes, Ekey
+          </label>
+          <input type="radio" id="plan_lbx" name="plan" value="LBX" required hidden>
+          <label for="plan_lbx" class="bubble-label">No, Only Lockbox</label>
+        </div>
+      </div>
+      <script>
+        // When "No, Only Lockbox" is selected, auto-select Lockbox "Yes"
+        document.getElementById('plan_lbx').addEventListener('change', function () {
+          if (this.checked) {
+            const lockboxYes = document.getElementById('lockbox_yes');
+            if (lockboxYes) {
+              lockboxYes.checked = true;
+              if (typeof toggleLockboxDropdown === "function") {
+                toggleLockboxDropdown();
+              }
+            }
+          }
+        });
+      </script>
+      <div class="section-title">Lockbox</div>
+      <div class="form-group">
+        <label>Do you need a Lockbox?</label>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: left;">
+          <input type="radio" id="lockbox_yes" name="lockbox_option" value="yes" required hidden onchange="toggleLockboxDropdown()">
+          <label for="lockbox_yes" class="bubble-label">Yes</label>
+
+          <input type="radio" id="lockbox_no" name="lockbox_option" value="no" required hidden onchange="toggleLockboxDropdown()">
+          <label for="lockbox_no" class="bubble-label">No</label>
+        </div>
+      </div>
+
+      <div id="lockboxFields" style="display: none; margin-top: 20px;">
+        <div class="form-group">
+          <label for="lockbox_qty">Supra Lockbox ($120 Each)</label>
+          <select id="lockbox_qty" name="lockbox_qty">
+            <option value="0">Select</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="shackle_code">4-Digit Shackle Code</label>
+          <input type="text" id="shackle_code" name="shackle_code" maxlength="4" placeholder="EX: 1234">
+        </div>
+        <div class="form-group">
+          <label for="shipping">Shipping or Pick-Up? (LBX)</label>
+          <select id="shipping" name="shipping">
+            <option value="" disabled selected>Select</option>
+            <option value="Yes">Shipping (+ $16)</option>
+            <option value="NO">Pick-Up </option>
+          </select>
+        </div>
+        <div class="form-row" id="pickupFields" style="display:none;">
+          <div class="form-group">
+            <label for="pickup_date">Pick-Up Date</label>
+            <input type="date" id="pickup_date" name="pickup_date">
+          </div>
+          <div class="form-group">
+            <label for="pickup_time">Time</label>
+            <input type="time" id="pickup_time" name="pickup_time">
+          </div>
+        </div>
+        <div class="form-group" id="shippingAddressGroup" style="display:none;">
+          <label for="shipping_address">Shipping Address (if not picking up)</label>
+          <textarea id="shipping_address" name="shipping_address" rows="3"></textarea>
+        </div>
+      </div>
+      <!-- Credit Card Authorization section moved to end of form -->
+      <div class="form-group">
+        <div class="section-title">Credit Card Authorization</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cc_name">Name on card </label>
+            <input type="text" id="cc_name" name="cc_name" required>
+          </div>
+        <!--  <div class="form-group">
+            <label for="cc_id">Member ID</label>
+            <input type="text" id="cc_id" name="cc_id" required value="" onfocus="this.value = document.getElementById('member_id').value;">
+          </div>-->
+        </div>
+    
+          <div class="form-group">
+            <label for="card_number">Credit/Debit Card Number</label>
+            <input type="tel"
+                   id="card_number"
+                   name="card_number"
+                   inputmode="numeric"
+                   autocomplete="cc-number"
+                   placeholder="1234 5678 9012 3456"
+                   required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="exp_month">Exp. Month</label>
+            <select id="exp_month" name="exp_month" autocomplete="cc-exp-month" required>
+              <option value="" disabled selected>MM</option>
+              <option value="01">01</option>
+              <option value="02">02</option>
+              <option value="03">03</option>
+              <option value="04">04</option>
+              <option value="05">05</option>
+              <option value="06">06</option>
+              <option value="07">07</option>
+              <option value="08">08</option>
+              <option value="09">09</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exp_year">Exp. Year</label>
+            <select id="exp_year" name="exp_year" autocomplete="cc-exp-year" required>
+              <option value="" disabled selected>YY</option>
+              <option value="24">2025</option>
+              <option value="25">2026</option>
+              <option value="26">2027</option>
+              <option value="27">2028</option>
+              <option value="28">2029</option>
+              <option value="29">2030</option>
+              <option value="30">2031</option>
+              <option value="31">2032</option>
+              <option value="32">2033</option>
+              <option value="33">2034</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cvc">CVC</label>
+          <input type="tel" id="cvc" name="cvc" autocomplete="cc-csc" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+        <div class="form-group">
+          <label for="signature">Agent Signature</label>
+          <input type="text" id="signature" name="signature" readonly>
+        </div>
+        <div class="form-group">
+          <label> Sign Here</label>
+          <canvas id="signature-pad" width="300" height="150" style="border:1px solid #ccc; border-radius: 6px;"></canvas>
+          <br>
+          <button type="button" onclick="clearSignature()">Clear Signature</button>
+          <input type="hidden" name="drawn_signature" id="drawn_signature">
+        </div>
+        <div class="form-group">
+          <div class="form-group">
+            <label for="total">Total Amount</label>
+            <input type="text" id="total" name="total" readonly style="font-weight:bold; color:#d10000;">
+          </div>
+        <!-- Manual acknowledge checkbox above submit button -->
+        <div class="form-group" style="margin-top: 30px; display: flex; align-items: center; gap: 10px;">
+          <a href="#" onclick="showTermsPopup()" id="acknowledgeLink" style="color: #1e4e79; font-weight: bold; text-decoration: underline;">
+            Click here to acknowledge terms
+          </a>
+          <span id="ackCheckmark" style="display: none; color: green; font-size: 1.2rem;">✔</span>
+        </div>
+        <div class="form-group" style="text-align: center;">
+          <button type="submit" style="background-color: #1e4e79; color: white;">Submit Application</button>
+        </div>
+      </div>
+      </form>
+      <div id="success-message" style="display:none; text-align:center; margin-top:30px; padding:20px; background:#e6f4ea; color:#216b2f; border:1px solid #b8e0c3; border-radius:8px;">
+        ✅ Application submitted successfully!
+      </div>
+  </div>
+  <div class="form-group" style="text-align: center;"><label for="notes">For Any Questions Email: Supra@themls.com</label>
+  </div>
+  <div class="form-group" style="text-align: center;"><label for="notes"> Phone: (310)357-1833</label>
+  </div>
+
+  <hr style="margin-top: 60px;">
+  <script>
+    // No longer disabling submit button or requiring form completion checks before submission.
+    function calculateTotal() {
+      // Get selected plan from radio buttons
+      let plan = '';
+      const planRadios = document.getElementsByName('plan');
+      for (const radio of planRadios) {
+        if (radio.checked) {
+          plan = radio.value.trim().toLowerCase();
+        }
+      }
+      const shipping = document.getElementById('shipping').value.trim().toLowerCase();
+      const lockboxQty = parseInt(document.getElementById('lockbox_qty').value) || 0;
+
+      // Plan cost (initial activation + programming fees)
+      let baseCost = 0;
+      if (plan === 'lbx') {
+        baseCost = 0;
+      }
+      if (plan === 'ekey' || plan === 'pro') {
+        baseCost = 80;
+      }
+
+      // Lockbox cost
+      const lockboxPrice = 120;
+      const lockboxTotal = lockboxQty * lockboxPrice;
+
+      // Shipping cost
+      const shippingCost = (shipping === 'yes') ? 16 : 0;
+
+      // Total
+      const total = baseCost + lockboxTotal + shippingCost;
+
+      document.getElementById('total').value = `$${total.toFixed(2)}`;
+    }
+
+    // Listen for radio button changes for plan
+    const planRadios = document.getElementsByName('plan');
+    for (const radio of planRadios) {
+      radio.addEventListener('change', calculateTotal);
+    }
+    document.getElementById('shipping').addEventListener('change', calculateTotal);
+    document.getElementById('lockbox_qty').addEventListener('input', calculateTotal);
+
+    // Calculate on load
+    calculateTotal();
+
+    function toggleShippingFields() {
+      const shipping = document.getElementById('shipping').value;
+      const pickupFields = document.getElementById('pickupFields');
+      const shippingAddressGroup = document.getElementById('shippingAddressGroup');
+
+      if (shipping === "Yes") {
+        pickupFields.style.display = "none";
+        shippingAddressGroup.style.display = "block";
+      } else if (shipping === "NO") {
+        pickupFields.style.display = "block";
+        shippingAddressGroup.style.display = "none";
+      } else {
+        pickupFields.style.display = "none";
+        shippingAddressGroup.style.display = "none";
+      }
+    }
+
+    document.getElementById('shipping').addEventListener('change', toggleShippingFields);
+    toggleShippingFields();
+  </script>
+  <script>
+    function toggleTooltip() {
+      const tooltip = document.getElementById('ekeyTooltip');
+      tooltip.classList.toggle('show');
+    }
+
+    function hideTooltip() {
+      const tooltip = document.getElementById('ekeyTooltip');
+      tooltip.classList.remove('show');
+    }
+  </script>
+  <script>
+    function toggleLockboxDropdown() {
+      // Find which radio is checked for lockbox_option
+      const yesRadio = document.getElementById('lockbox_yes');
+      const noRadio = document.getElementById('lockbox_no');
+      const lockboxQtySelect = document.getElementById('lockbox_qty');
+      const lockboxFields = document.getElementById('lockboxFields');
+
+      if (lockboxFields) {
+        lockboxFields.style.display = (yesRadio && yesRadio.checked) ? 'block' : 'none';
+      }
+
+      // Make shackle code required only if "Yes" is selected
+      const shackleCodeInput = document.getElementById('shackle_code');
+      if (shackleCodeInput) {
+        if (yesRadio && yesRadio.checked) {
+          shackleCodeInput.setAttribute('required', 'required');
+        } else {
+          shackleCodeInput.removeAttribute('required');
+        }
+      }
+
+      if (noRadio && noRadio.checked && lockboxQtySelect) {
+        lockboxQtySelect.value = "0";
+        calculateTotal();
+      }
+    }
+
+    // Ensure toggle is applied correctly on page load
+    (function() {
+      function ready(fn) {
+        if (document.readyState != 'loading'){
+          fn();
+        } else {
+          document.addEventListener('DOMContentLoaded', fn);
+        }
+      }
+      ready(function() {
+        toggleLockboxDropdown(); // apply current value on load
+        const yesRadio = document.getElementById('lockbox_yes');
+        const noRadio = document.getElementById('lockbox_no');
+        if (yesRadio) {
+          yesRadio.addEventListener('change', toggleLockboxDropdown);
+        }
+        if (noRadio) {
+          noRadio.addEventListener('change', toggleLockboxDropdown);
+        }
+      });
+    })();
+  </script>
+  <!-- The file input is now invisibly over the button for mobile compatibility, so we do not need to trigger click via JS. -->
+  <!-- Removed duplicate submit handler and terms popup logic block, see below for single source -->
+  <script>
+    function updateFileList(input) {
+      const fileList = document.getElementById('fileList');
+
+      // Get existing files stored in a DataTransfer object
+      if (!window.fileBuffer) {
+        window.fileBuffer = new DataTransfer();
+      }
+
+      // Append new files to the buffer, checking for type and size before adding
+      Array.from(input.files).forEach(file => {
+        // MIME type validation
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/heic'];
+        if (!allowedTypes.includes(file.type)) {
+          alert(`"${file.name}" is not an accepted file type.`);
+          return;
+        }
+        const fileSizeMB = file.size / (1024 * 1024);
+        if (fileSizeMB > 15) {
+          alert(`"${file.name}" exceeds the 15MB limit. Please choose a smaller file.`);
+          return;
+        }
+        if (window.fileBuffer.files.length < 3) {
+          window.fileBuffer.items.add(file);
+        }
+      });
+
+      // Reflect back to input
+      input.files = window.fileBuffer.files;
+
+      // Update visible list
+      fileList.innerHTML = "";
+
+      const files = Array.from(input.files);
+      const list = document.createElement("ul");
+      list.style.listStyle = "none";
+      list.style.padding = "0";
+
+      files.forEach((file, index) => {
+        const listItem = document.createElement("li");
+        listItem.style.display = "flex";
+        listItem.style.alignItems = "center";
+        listItem.style.justifyContent = "space-between";
+        listItem.style.padding = "10px 15px";
+        listItem.style.marginBottom = "10px";
+        listItem.style.backgroundColor = "#eaf1fb";
+        listItem.style.border = "1px solid #cdd8e6";
+        listItem.style.borderRadius = "6px";
+
+        const fileInfo = document.createElement("div");
+        fileInfo.innerHTML = `<strong>File ${index + 1}:</strong> ${file.name} — ${Math.round(file.size / 1024)} KB — ${file.type}`;
+        fileInfo.style.color = "#1a2e55";
+
+        const rightSide = document.createElement("div");
+        rightSide.style.display = "flex";
+        rightSide.style.alignItems = "center";
+
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.style.width = "60px";
+            img.style.marginLeft = "15px";
+            img.style.borderRadius = "4px";
+            img.style.boxShadow = "0 2px 6px rgba(0,0,0,0.1)";
+            rightSide.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+
+        const removeBtn = document.createElement("button");
+        removeBtn.innerHTML = "❌";
+        removeBtn.title = "Remove file";
+        removeBtn.onclick = () => {
+          const newBuffer = new DataTransfer();
+          Array.from(window.fileBuffer.files).forEach((f, i) => {
+            if (f !== file) newBuffer.items.add(f);
+          });
+          window.fileBuffer = newBuffer;
+          input.files = window.fileBuffer.files;
+          updateFileList(input);
+        };
+        rightSide.appendChild(removeBtn);
+
+        listItem.appendChild(fileInfo);
+        listItem.appendChild(rightSide);
+        list.appendChild(listItem);
+      });
+
+      const count = document.createElement("p");
+      count.innerHTML = `<strong style="color: #2169b2">${files.length} file(s) uploaded:</strong>`;
+      fileList.appendChild(count);
+      fileList.appendChild(list);
+    }
+
+    const dropArea = document.getElementById('drop-area');
+    const uploadInput = document.getElementById('upload_files');
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropArea.style.backgroundColor = '#eaf1fb';
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropArea.style.backgroundColor = '#f9fafb';
+      }, false);
+    });
+
+dropArea.addEventListener('drop', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropArea.style.backgroundColor = '#f9fafb';
+
+  const dataTransfer = new DataTransfer();
+  Array.from(e.dataTransfer.files).slice(0, 3).forEach(file => dataTransfer.items.add(file));
+  uploadInput.files = dataTransfer.files;
+
+  updateFileList(uploadInput);
+});
+  </script>
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+  <script>
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas);
+
+    function clearSignature() {
+      signaturePad.clear();
+      document.getElementById('drawn_signature').value = '';
+    }
+
+    document.getElementById('supraForm').addEventListener('submit', function (e) {
+      if (!signaturePad.isEmpty()) {
+        document.getElementById('drawn_signature').value = signaturePad.toDataURL();
+      }
+    });
+  </script>
+  <script>
+    const popupCanvas = document.getElementById('popup-signature-pad');
+    const popupSignaturePad = new SignaturePad(popupCanvas);
+
+    // Prevent scrolling and text selection during signature on mobile
+    popupCanvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+    }, { passive: false });
+
+    function clearPopupSignature() {
+      popupSignaturePad.clear();
+      document.getElementById('popup_drawn_signature').value = '';
+    }
+
+    function savePopupSignature() {
+      if (!popupSignaturePad.isEmpty()) {
+        document.getElementById('popup_drawn_signature').value = popupSignaturePad.toDataURL();
+      }
+    }
+  </script>
+</script>
+  <script>
+    // Auto-fill Agent Signature with Name and make signature readonly
+    document.getElementById('name').addEventListener('input', function () {
+      document.getElementById('signature').value = this.value;
+    });
+  </script>
+</script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function highlightMissingFields() {
+        const requiredFields = supraForm.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+          const formGroup = field.closest('.form-group');
+          if (formGroup) {
+            if ((field.type === 'checkbox' && !field.checked) ||
+                (field.type !== 'checkbox' && !field.value.trim())) {
+              formGroup.classList.add('missing');
+            } else {
+              formGroup.classList.remove('missing');
+            }
+          }
+        });
+      }
+      const purchaseTab = document.getElementById('purchaseTab');
+      const cancelTab = document.getElementById('cancelTab');
+      const purchaseForm = document.getElementById('purchaseFormContainer');
+      const cancelForm = document.getElementById('cancelForm');
+      const popup = document.getElementById('termsPopup');
+      const supraForm = document.getElementById('supraForm');
+      // Initially hide the forms and popup
+      purchaseForm.style.display = 'none';
+      popup.style.display = 'none';
+      if (cancelForm) cancelForm.style.display = 'none';
+
+      if (purchaseTab && cancelTab && purchaseForm && cancelForm) {
+        purchaseTab.addEventListener('click', function (e) {
+          e.preventDefault();
+          purchaseForm.style.display = 'block';
+          if (cancelForm) cancelForm.style.display = 'none';
+          popup.style.display = 'none';
+          purchaseTab.classList.add('active');
+          cancelTab.classList.remove('active');
+        });
+        cancelTab.addEventListener('click', function (e) {
+          e.preventDefault();
+          purchaseForm.style.display = 'none';
+          if (cancelForm) cancelForm.style.display = 'block';
+          purchaseTab.classList.remove('active');
+          cancelTab.classList.add('active');
+        });
+        // Set initial active tab and show purchase form by default
+        purchaseTab.classList.add('active');
+        purchaseForm.style.display = 'block';
+        if (cancelForm) cancelForm.style.display = 'none';
+      }
+
+      // Terms acknowledgment popup logic (from form1.html)
+      supraForm.addEventListener("submit", function (e) {
+        const terms = document.getElementById('acknowledged_terms');
+        if (!terms.checked) {
+          e.preventDefault();
+          showTermsPopup();
+          return false;
+        }
+        highlightMissingFields();
+        // Add timestamp if not present
+        if (!document.querySelector('input[name="acknowledgement_timestamp"]')) {
+          supraForm.insertAdjacentHTML('beforeend', `<input type="hidden" name="acknowledgement_timestamp" value="${new Date().toISOString()}">`);
+        }
+      });
+
+      // Add event listener to manual acknowledge checkbox to trigger popup
+      const manualAck = document.getElementById('manual_ack_checkbox');
+      if (manualAck) {
+        manualAck.addEventListener('click', function (e) {
+          e.preventDefault();
+          showTermsPopup();
+        });
+      }
+
+      window.showTermsPopup = function showTermsPopup() {
+        popup.style.display = 'flex';
+        popup.style.justifyContent = 'center';
+        popup.style.alignItems = 'center';
+      };
+      window.acceptTerms = function acceptTerms() {
+        const terms = document.getElementById('acknowledged_terms');
+        const popupSigData = document.getElementById('popup_drawn_signature').value;
+
+        if (popupSignaturePad.isEmpty()) {
+          alert("Please initial in the box before acknowledging.");
+          return;
+        }
+
+        savePopupSignature();
+        if (!popupSigData) {
+          alert("Signature failed to save. Please try again.");
+          return;
+        }
+
+        terms.checked = true;
+        document.getElementById('ackCheckmark').style.display = 'inline';
+        popup.style.display = 'none';
+      };
+      window.closeTermsPopup = function closeTermsPopup() {
+        document.getElementById('termsPopup').style.display = 'none';
+      };
+    });
+  </script>
+</body>
+</html>
